@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "claude-start-cf",
+  "compatibility_date": "2025-09-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+
+  // Non-secret vars — visible in wrangler.jsonc, available via process.env
+  // For actual secrets, use: wrangler secret put SECRET_NAME
+  "vars": {
+    "APP_ENVIRONMENT": "production",
+    "DEMO_WRANGLER_VAR": "set-via-wrangler-jsonc"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "acme-db",
+      "database_id": "40793ebc-0810-434d-90b2-81180131e284"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "acme-bucket"
+    }
+  ]
+}

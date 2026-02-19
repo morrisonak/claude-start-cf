@@ -1,0 +1,11 @@
+node_modules
+.DS_Store
+.cache
+.env
+.env.local
+.env.*.local
+.dev.vars
+dist
+.wrangler
+worker-configuration.d.ts
+.content-collections/cache
