@@ -36,7 +36,7 @@ Every pattern has a working demo page with code examples:
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22.12+ (required by Vite 7 and Wrangler 4)
 - A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier works)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
 
@@ -44,7 +44,7 @@ Every pattern has a working demo page with code examples:
 
 ```sh
 # Clone the template
-npx degit your-username/claude-start-cf my-app
+npx degit morrisonak/claude-start-cf my-app
 cd my-app
 
 # Install dependencies
