@@ -253,7 +253,7 @@ function PostWithValidationDemo() {
         </div>
       )}
       <div className="mt-4 rounded border bg-muted/50 p-3">
-        <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+        <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`const addNumbers = createServerFn({ method: 'POST' })
   .inputValidator((data: { a: number; b: number }) => {
     if (typeof data.a !== 'number') throw new Error('...')
@@ -376,7 +376,7 @@ function ErrorHandlingDemo() {
         </div>
       )}
       <div className="mt-4 rounded border bg-muted/50 p-3">
-        <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+        <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`// Errors
 throw new Error('Something went wrong')
 
@@ -527,7 +527,7 @@ function FileOrgDemo() {
     >
       <div className="space-y-4 text-sm">
         <div className="rounded border bg-muted/50 p-3">
-          <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+          <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`src/utils/
 ├── greetings.functions.ts   # createServerFn wrappers (import anywhere)
 ├── greetings.server.ts      # Server-only helpers (DB, internal logic)
@@ -597,7 +597,7 @@ function FileBlock({
         <span className="text-xs text-muted-foreground">— {label}</span>
       </div>
       <div className="p-3">
-        <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+        <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
           {code}
         </pre>
       </div>
@@ -609,8 +609,8 @@ function FileBlock({
 function KV({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
-      <span className="text-muted-foreground">{label}</span>
-      <code className="rounded bg-muted px-2 py-0.5 text-xs font-mono">
+      <span className="shrink-0 text-muted-foreground">{label}</span>
+      <code className="min-w-0 rounded bg-muted px-2 py-0.5 text-xs font-mono break-all">
         {value}
       </code>
     </div>

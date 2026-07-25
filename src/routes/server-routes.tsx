@@ -209,7 +209,7 @@ function HelloPostDemo() {
         </button>
       </div>
       {response !== null && (
-        <div className="mt-3 rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
+        <div className="mt-3 overflow-x-auto rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
           {response}
         </div>
       )}
@@ -330,7 +330,7 @@ function DynamicParamDemo() {
               /api/users/{userId}
             </span>
           </div>
-          <div className="rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
+          <div className="overflow-x-auto rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
             {response}
           </div>
         </div>
@@ -381,7 +381,7 @@ function CombinedRouteDemo() {
         {loading ? '...' : 'POST to this page'}
       </button>
       {response !== null && (
-        <div className="mt-3 rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
+        <div className="mt-3 overflow-x-auto rounded border bg-muted/50 p-3 font-mono text-xs whitespace-pre">
           {response}
         </div>
       )}
@@ -480,11 +480,11 @@ function RouteRow({
   methods: string
 }) {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <span className="text-muted-foreground">{file}</span>
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-x-4 gap-y-0.5 sm:flex-row sm:items-center sm:justify-between">
+      <span className="break-all text-muted-foreground">{file}</span>
+      <div className="flex items-center gap-2 pb-1.5 sm:pb-0">
         <span className="text-xs text-muted-foreground">{methods}</span>
-        <code className="text-foreground">{path}</code>
+        <code className="break-all text-foreground">{path}</code>
       </div>
     </div>
   )

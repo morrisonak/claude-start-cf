@@ -17,12 +17,12 @@ export function DemoCard({
     <div className="rounded-lg border bg-card">
       <div className="border-b px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
             {icon}
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="font-semibold">{title}</h2>
-            <code className="text-xs text-muted-foreground">{file}</code>
+            <code className="block text-xs break-words text-muted-foreground">{file}</code>
           </div>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">{description}</p>
