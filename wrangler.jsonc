@@ -25,5 +25,15 @@
       "binding": "BUCKET",
       "bucket_name": "acme-bucket"
     }
+  ],
+
+  // Self-referencing service binding — a Worker cannot fetch() its own
+  // hostname over HTTP, so internal requests (e.g. the SEO head inspector)
+  // go through this binding instead.
+  "services": [
+    {
+      "binding": "SELF",
+      "service": "claude-start-cf"
+    }
   ]
 }

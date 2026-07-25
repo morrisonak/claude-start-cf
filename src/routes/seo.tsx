@@ -3,7 +3,8 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
 import { DemoCard, CodeBlock } from '~/components/demo'
-import { pageHead } from '~/lib/site'
+import { getEnv } from '~/lib/env'
+import { pageHead, SITE_URL } from '~/lib/site'
 import {
   Search,
   FileText,
@@ -20,14 +21,21 @@ import {
 // Server function to inspect the head tags on any route
 // ---------------------------------------------------------------------------
 const fetchHead = createServerFn({ method: 'GET' })
-  .inputValidator((data: { path: string }) => data)
+  .inputValidator((data: { path: string }) => {
+    const path = data.path.trim()
+    if (!path.startsWith('/') || path.startsWith('//')) {
+      throw new Error('Path must start with /')
+    }
+    return { path }
+  })
   .handler(async ({ data }) => {
-    const base = 'https://claude-start-cf.jmorrison.workers.dev'
-    const res = await fetch(`${base}${data.path}`)
+    // A Worker cannot fetch() its own public hostname, so route the
+    // request through the SELF service binding (see wrangler.jsonc).
+    const res = await getEnv().SELF.fetch(`${SITE_URL}${data.path}`)
     const html = await res.text()
 
     const headMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i)
-    if (!headMatch) return { html: 'Could not extract <head>' }
+    if (!headMatch) return { html: `Could not extract <head> (status ${res.status})` }
 
     return { html: headMatch[1].trim() }
   })
