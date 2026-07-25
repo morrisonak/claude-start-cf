@@ -162,9 +162,21 @@ wrangler secret put  → Production secrets (encrypted)
   "r2_buckets": [{
     "binding": "BUCKET",
     "bucket_name": "my-bucket"
+  }],
+  // Lets the Worker call its own routes (Workers can't fetch their own hostname)
+  "services": [{
+    "binding": "SELF",
+    "service": "my-app"
   }]
 }
 ```
+
+## Workers Gotchas
+
+Two edge-runtime issues this template already solves, worth knowing when you build on it:
+
+- **A Worker cannot `fetch()` its own public hostname.** Cloudflare blocks self-requests, so anything that needs to call one of your own routes server-side (like the SEO head inspector) must go through a self-referencing service binding: `getEnv().SELF.fetch(url)`. The `services` entry in `wrangler.jsonc` points the binding at the Worker itself.
+- **The Workers build resolves npm packages with the `browser` condition.** Packages that ship separate browser and server builds can end up running DOM-dependent code during SSR, which silently breaks server rendering (React recovers by client rendering, so pages look fine but crawlers get an empty body). `vite.config.ts` includes a small plugin that forces `html-dom-parser` (used by `html-react-parser`) to its server build in the SSR environment; use the same pattern if another dependency hits this.
 
 ## Tech Stack
 

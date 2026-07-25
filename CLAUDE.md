@@ -40,12 +40,22 @@ TanStack Start + Cloudflare Workers full-stack template. Demonstrates SSR, serve
 
 **Environment variables:** `VITE_` prefix = client-visible. No prefix = server-only via `process.env`. Cloudflare secrets via `wrangler secret put`.
 
+**Self-fetch:** A Worker cannot `fetch()` its own hostname (Cloudflare blocks it). Use the self-referencing `SELF` service binding in wrangler.jsonc instead: `getEnv().SELF.fetch(url)`. See the head inspector in `src/routes/seo.tsx`.
+
+**SSR module resolution:** The Workers build resolves npm packages with the `browser` condition, so packages that ship separate browser/server builds can load DOM-dependent code on the server and break SSR (React falls back to client rendering, shipping an empty body). `vite.config.ts` has a plugin forcing `html-dom-parser` to its server build; follow that pattern for similar packages.
+
 **Demo pages:** Each route in `src/routes/` is a demo page built from the shared `DemoCard` and `CodeBlock` components in `src/components/demo.tsx`. Follow the pattern in `llmo.tsx` or `seo.tsx` for new pages.
 
 **Adding a new demo page:**
 1. Create `src/routes/my-page.tsx` with `createFileRoute`, `DemoCard`, `CodeBlock`, and a `head()` built with `pageHead()` from `~/lib/site`
 2. Add one entry to the categories array in `src/lib/nav.ts` (icon from lucide-react) — the homepage grid, desktop nav, and mobile nav all read from it
 3. Add the path to `staticRoutes` in `src/routes/sitemap[.]xml.ts`
+
+**Mobile layout rules for demo pages** (keep pages from overflowing on phones):
+- Code samples go in `CodeBlock`; any raw `<pre>` needs `overflow-x-auto`
+- Text inputs in `flex` rows need `min-w-0` alongside `flex-1` (inputs have a large intrinsic min width)
+- Key/value rows showing long values (timestamps, user agents, keys) need `break-all` on the value and `shrink-0` on the label
+- Wide tables go inside an `overflow-x-auto` wrapper
 
 ## File Conventions
 
