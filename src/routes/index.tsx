@@ -14,6 +14,7 @@ import {
   Newspaper,
   BookOpen,
   Rocket,
+  Github,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
@@ -72,7 +73,18 @@ function Home() {
       <SiteNav />
       <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-8 sm:py-16">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Demos</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold tracking-tight">Demos</h1>
+            <a
+              href="https://github.com/morrisonak/claude-start-cf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Github className="h-4 w-4" />
+              GitHub
+            </a>
+          </div>
           <p className="text-muted-foreground">
             Patterns and integrations included in this TanStack Start + Cloudflare template.
           </p>

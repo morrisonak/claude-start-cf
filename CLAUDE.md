@@ -2,9 +2,14 @@
 
 TanStack Start + Cloudflare Workers full-stack template. Demonstrates SSR, server functions, D1, R2, and edge deployment patterns.
 
+## Workflow
+
+- Always deploy after completing updates: `npm run deploy`
+- No local dev server — deploy directly to test
+
 ## Commands
 
-- `npm run deploy` — Build + deploy to Cloudflare Workers. **This is the primary workflow — no local dev server, deploy directly to test.**
+- `npm run deploy` — Build + deploy to Cloudflare Workers
 - `npm run build` — Production build only (vite build && tsc --noEmit)
 - `npm run cf-typegen` — Regenerate TypeScript types from wrangler.jsonc bindings
 
