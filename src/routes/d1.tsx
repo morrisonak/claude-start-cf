@@ -3,6 +3,11 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getDB } from '~/lib/env'
 import { pageHead } from '~/lib/site'
+import {
+  MAX_NOTES,
+  MAX_NOTE_TITLE_LENGTH,
+  MAX_NOTE_BODY_LENGTH,
+} from '~/lib/demo-limits'
 import { SiteNav } from '~/components/SiteNav'
 import { DemoCard, CodeBlock } from '~/components/demo'
 import {
@@ -67,10 +72,23 @@ const listNotes = createServerFn({ method: 'GET' }).handler(async () => {
 const createNote = createServerFn({ method: 'POST' })
   .inputValidator((data: { title: string; body: string }) => {
     if (!data.title.trim()) throw new Error('Title is required')
+    if (data.title.length > MAX_NOTE_TITLE_LENGTH)
+      throw new Error(`Title is limited to ${MAX_NOTE_TITLE_LENGTH} characters`)
+    if (data.body.length > MAX_NOTE_BODY_LENGTH)
+      throw new Error(`Body is limited to ${MAX_NOTE_BODY_LENGTH} characters`)
     return data
   })
   .handler(async ({ data }) => {
     const db = getDB()
+    // The notes table is shared by every visitor to the live demo, so cap it
+    const { results } = await db
+      .prepare('SELECT COUNT(*) as count FROM notes')
+      .all<{ count: number }>()
+    if ((results[0]?.count ?? 0) >= MAX_NOTES) {
+      throw new Error(
+        `Demo limit reached (${MAX_NOTES} notes). Delete some notes first.`,
+      )
+    }
     const result = await db
       .prepare('INSERT INTO notes (title, body) VALUES (?, ?)')
       .bind(data.title, data.body)
@@ -254,8 +272,8 @@ function CreateNoteDemo({ onCreated }: { onCreated: () => void }) {
       setTitle('')
       setBody('')
       onCreated()
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to create note')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create note')
     }
     setLoading(false)
   }
@@ -322,12 +340,19 @@ function NotesListDemo({
   onDeleted: () => void
 }) {
   const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleDelete(id: number) {
+    setError(null)
     setDeletingId(id)
-    await deleteNote({ data: { id } })
-    onDeleted()
-    setDeletingId(null)
+    try {
+      await deleteNote({ data: { id } })
+      onDeleted()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete note')
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   return (
@@ -373,6 +398,11 @@ function NotesListDemo({
               </button>
             </div>
           ))}
+        </div>
+      )}
+      {error && (
+        <div className="mt-3 rounded border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          {error}
         </div>
       )}
     </DemoCard>

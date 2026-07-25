@@ -3,6 +3,14 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getBucket } from '~/lib/env'
 import { pageHead } from '~/lib/site'
+import {
+  DEMO_PREFIXES,
+  MAX_DEMO_OBJECTS,
+  MAX_TEXT_LENGTH,
+  MAX_UPLOAD_BYTES,
+  assertDemoKey,
+  sanitizeFilename,
+} from '~/lib/demo-limits'
 import { SiteNav } from '~/components/SiteNav'
 import { DemoCard, CodeBlock, formatBytes } from '~/components/demo'
 import {
@@ -32,27 +40,47 @@ type R2Object = {
 }
 
 // ---------------------------------------------------------------------------
-// Server functions — all R2 access happens here via getBucket()
+// Server functions — all R2 access happens here via getBucket().
+// The bucket is shared by every visitor to the live site, so all access is
+// scoped to the demo prefixes and capped (see ~/lib/demo-limits).
 // ---------------------------------------------------------------------------
+async function assertBelowObjectLimit(bucket: R2Bucket, prefix: string) {
+  const listed = await bucket.list({ prefix, limit: MAX_DEMO_OBJECTS })
+  if (listed.objects.length >= MAX_DEMO_OBJECTS) {
+    throw new Error(
+      `Demo limit reached (${MAX_DEMO_OBJECTS} objects under ${prefix}). Delete something first.`,
+    )
+  }
+}
 const listObjects = createServerFn({ method: 'GET' }).handler(async () => {
   const bucket = getBucket()
-  const listed = await bucket.list({ limit: 50 })
-  return listed.objects.map((obj) => ({
-    key: obj.key,
-    size: obj.size,
-    uploaded: obj.uploaded.toISOString(),
-    httpEtag: obj.httpEtag,
-  }))
+  // Only list the demo prefixes so nothing else in the bucket is exposed
+  const lists = await Promise.all(
+    DEMO_PREFIXES.map((prefix) => bucket.list({ prefix, limit: 50 })),
+  )
+  return lists
+    .flatMap((l) => l.objects)
+    .map((obj) => ({
+      key: obj.key,
+      size: obj.size,
+      uploaded: obj.uploaded.toISOString(),
+      httpEtag: obj.httpEtag,
+    }))
 })
 
 const uploadText = createServerFn({ method: 'POST' })
   .inputValidator((data: { key: string; content: string }) => {
     if (!data.key.trim()) throw new Error('Key is required')
     if (!data.content.trim()) throw new Error('Content is required')
+    assertDemoKey(data.key)
+    if (data.content.length > MAX_TEXT_LENGTH) {
+      throw new Error(`Content is limited to ${MAX_TEXT_LENGTH.toLocaleString()} characters`)
+    }
     return data
   })
   .handler(async ({ data }) => {
     const bucket = getBucket()
+    await assertBelowObjectLimit(bucket, 'demo/')
     await bucket.put(data.key, data.content, {
       httpMetadata: { contentType: 'text/plain' },
     })
@@ -60,7 +88,10 @@ const uploadText = createServerFn({ method: 'POST' })
   })
 
 const getObject = createServerFn({ method: 'GET' })
-  .inputValidator((data: { key: string }) => data)
+  .inputValidator((data: { key: string }) => {
+    assertDemoKey(data.key)
+    return data
+  })
   .handler(async ({ data }) => {
     const bucket = getBucket()
     const obj = await bucket.get(data.key)
@@ -76,7 +107,10 @@ const getObject = createServerFn({ method: 'GET' })
   })
 
 const deleteObject = createServerFn({ method: 'POST' })
-  .inputValidator((data: { key: string }) => data)
+  .inputValidator((data: { key: string }) => {
+    assertDemoKey(data.key)
+    return data
+  })
   .handler(async ({ data }) => {
     const bucket = getBucket()
     await bucket.delete(data.key)
@@ -84,7 +118,10 @@ const deleteObject = createServerFn({ method: 'POST' })
   })
 
 const headObject = createServerFn({ method: 'GET' })
-  .inputValidator((data: { key: string }) => data)
+  .inputValidator((data: { key: string }) => {
+    assertDemoKey(data.key)
+    return data
+  })
   .handler(async ({ data }) => {
     const bucket = getBucket()
     const obj = await bucket.head(data.key)
@@ -104,17 +141,25 @@ const uploadImage = createServerFn({ method: 'POST' })
       if (!data.name) throw new Error('File name is required')
       if (!data.type.startsWith('image/'))
         throw new Error('Only image files are allowed')
+      // base64 inflates size by 4/3, so compare against the encoded length
+      if (data.base64.length > (MAX_UPLOAD_BYTES / 3) * 4) {
+        throw new Error(
+          `Images are limited to ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB`,
+        )
+      }
       return data
     },
   )
   .handler(async ({ data }) => {
     const bucket = getBucket()
+    await assertBelowObjectLimit(bucket, 'images/')
     const binaryStr = atob(data.base64)
     const bytes = new Uint8Array(binaryStr.length)
     for (let i = 0; i < binaryStr.length; i++) {
       bytes[i] = binaryStr.charCodeAt(i)
     }
-    const key = `images/${data.name}`
+    // Random suffix so concurrent visitors can't overwrite each other
+    const key = `images/${crypto.randomUUID().slice(0, 8)}-${sanitizeFilename(data.name)}`
     await bucket.put(key, bytes, {
       httpMetadata: { contentType: data.type },
     })
@@ -133,7 +178,10 @@ const listImages = createServerFn({ method: 'GET' }).handler(async () => {
 })
 
 const deleteImage = createServerFn({ method: 'POST' })
-  .inputValidator((data: { key: string }) => data)
+  .inputValidator((data: { key: string }) => {
+    assertDemoKey(data.key)
+    return data
+  })
   .handler(async ({ data }) => {
     const bucket = getBucket()
     await bucket.delete(data.key)
@@ -243,8 +291,8 @@ function ImageUploadDemo({ onUploaded }: { onUploaded: () => void }) {
             data: { name: file.name, type: file.type, base64 },
           })
           keys.push(result.key)
-        } catch (err: any) {
-          setError(err.message ?? `Failed to upload ${file.name}`)
+        } catch (err) {
+          setError(err instanceof Error ? err.message : `Failed to upload ${file.name}`)
           break
         }
       }
@@ -359,12 +407,13 @@ function fileToBase64(file: File): Promise<string> {
   })
 }
 
-// Server: decode and upload to R2
+// Server: decode and upload to R2 (sanitized name + random suffix)
 const uploadImage = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const bucket = getBucket()
     const bytes = Uint8Array.from(atob(data.base64), c => c.charCodeAt(0))
-    await bucket.put(\`images/\${data.name}\`, bytes, {
+    const key = \`images/\${crypto.randomUUID().slice(0, 8)}-\${sanitizeFilename(data.name)}\`
+    await bucket.put(key, bytes, {
       httpMetadata: { contentType: data.type },
     })
   })`}
@@ -382,14 +431,21 @@ function GalleryDemo({
 }) {
   const [deletingKey, setDeletingKey] = useState<string | null>(null)
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleDelete(key: string, e: React.MouseEvent) {
     e.stopPropagation()
+    setError(null)
     setDeletingKey(key)
-    await deleteImage({ data: { key } })
-    if (lightbox === key) setLightbox(null)
-    onChanged()
-    setDeletingKey(null)
+    try {
+      await deleteImage({ data: { key } })
+      if (lightbox === key) setLightbox(null)
+      onChanged()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete image')
+    } finally {
+      setDeletingKey(null)
+    }
   }
 
   return (
@@ -437,6 +493,12 @@ function GalleryDemo({
         </div>
       )}
 
+      {error && (
+        <div className="mt-3 rounded border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
       {lightbox && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
@@ -466,6 +528,7 @@ export const Route = createFileRoute('/api/r2')({
       GET: async ({ request }) => {
         const url = new URL(request.url)
         const key = url.searchParams.get('key')
+        if (!isDemoKey(key)) return new Response('Forbidden', { status: 403 })
         const bucket = getBucket()
         const obj = await bucket.get(key)
         if (!obj) return new Response('Not found', { status: 404 })
@@ -503,8 +566,8 @@ function UploadDemo({ onUploaded }: { onUploaded: () => void }) {
       setKey('')
       setContent('')
       onUploaded()
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to upload')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload')
     }
     setLoading(false)
   }
@@ -514,13 +577,13 @@ function UploadDemo({ onUploaded }: { onUploaded: () => void }) {
       icon={<Upload className="h-5 w-5" />}
       title="Upload an object"
       file="bucket.put(key, body, options)"
-      description="Uses a POST server function. The key is the object path (supports slashes for folder-like structure). Content-type metadata is set via httpMetadata."
+      description="Uses a POST server function. The key is the object path (supports slashes for folder-like structure). On this public demo, keys must start with demo/ and content is size-capped."
     >
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          placeholder="Key (e.g. notes/hello.txt)"
+          placeholder="Key (e.g. demo/hello.txt)"
           required
           className="w-full rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
         />
@@ -549,6 +612,7 @@ function UploadDemo({ onUploaded }: { onUploaded: () => void }) {
         code={`const uploadText = createServerFn({ method: 'POST' })
   .inputValidator((data: { key: string; content: string }) => {
     if (!data.key.trim()) throw new Error('Key is required')
+    assertDemoKey(data.key) // public demo: only demo/* keys allowed
     return data
   })
   .handler(async ({ data }) => {
@@ -571,12 +635,19 @@ function ObjectListDemo({
   onChanged: () => void
 }) {
   const [deletingKey, setDeletingKey] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleDelete(key: string) {
+    setError(null)
     setDeletingKey(key)
-    await deleteObject({ data: { key } })
-    onChanged()
-    setDeletingKey(null)
+    try {
+      await deleteObject({ data: { key } })
+      onChanged()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete object')
+    } finally {
+      setDeletingKey(null)
+    }
   }
 
   return (
@@ -620,6 +691,11 @@ function ObjectListDemo({
           ))}
         </div>
       )}
+      {error && (
+        <div className="mt-3 rounded border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
     </DemoCard>
   )
 }
@@ -644,8 +720,8 @@ function ReadObjectDemo() {
     try {
       const res = await getObject({ data: { key } })
       setResult(res)
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to read object')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to read object')
     }
     setLoading(false)
   }
@@ -669,7 +745,7 @@ function ReadObjectDemo() {
         <input
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          placeholder="Object key (e.g. notes/hello.txt)"
+          placeholder="Object key (e.g. demo/hello.txt)"
           required
           className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
         />

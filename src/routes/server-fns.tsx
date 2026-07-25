@@ -406,8 +406,8 @@ function FormDataDemo() {
       const formData = new FormData(e.currentTarget)
       const res = await submitContactForm({ data: formData })
       setResult(res)
-    } catch (err: any) {
-      setError(err.message ?? 'Submission failed')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Submission failed')
     }
   }
 

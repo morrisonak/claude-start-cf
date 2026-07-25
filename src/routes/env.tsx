@@ -15,9 +15,9 @@ const getServerEnv = createServerFn({ method: 'GET' }).handler(async () => {
     hasSecretApiKey: !!process.env.SECRET_API_KEY,
     hasDatabaseUrl: !!process.env.DATABASE_URL,
     nodeEnv: process.env.NODE_ENV ?? 'undefined',
-    // Safe to return: the key length tells us it's set without leaking it
+    // Safe to return: presence and length only — never any actual characters
     secretKeyPreview: process.env.SECRET_API_KEY
-      ? `${process.env.SECRET_API_KEY.slice(0, 7)}...(${process.env.SECRET_API_KEY.length} chars)`
+      ? `set (${process.env.SECRET_API_KEY.length} chars)`
       : 'not set',
     // Cloudflare wrangler.jsonc [vars] — also accessible via process.env
     appEnvironment: process.env.APP_ENVIRONMENT ?? 'not set',
