@@ -1,8 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { allPosts } from 'content-collections'
 import { Calendar, User, ArrowRight } from 'lucide-react'
+import { pageHead } from '~/lib/site'
 
 export const Route = createFileRoute('/blog/')({
+  head: () =>
+    pageHead({
+      title: 'Blog — claude-start-cf Template',
+      description:
+        'Static markdown blog posts processed at build time with content-collections.',
+      path: '/blog',
+    }),
   loader: () => {
     const sorted = [...allPosts].sort(
       (a, b) =>

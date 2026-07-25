@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Zap,
   Variable,
@@ -18,16 +19,13 @@ import {
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
-  head: () => ({
-    meta: [
-      { title: 'claude-start-cf — TanStack Start + Cloudflare Template' },
-      {
-        name: 'description',
-        content:
-          'Build full-stack apps on the edge with TanStack Start, Cloudflare Workers, D1, R2, and shadcn/ui.',
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: 'claude-start-cf — TanStack Start + Cloudflare Template',
+      description:
+        'Build full-stack apps on the edge with TanStack Start, Cloudflare Workers, D1, R2, and shadcn/ui.',
+      path: '/',
+    }),
   component: Home,
 })
 

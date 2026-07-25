@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getBucket } from '~/lib/env'
+import { pageHead } from '~/lib/site'
 import { SiteNav } from '~/components/SiteNav'
 import {
   HardDrive,
@@ -142,6 +143,13 @@ const deleteImage = createServerFn({ method: 'POST' })
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/r2')({
+  head: () =>
+    pageHead({
+      title: 'R2 Storage — claude-start-cf Template',
+      description:
+        'Cloudflare R2 object storage demo: drag & drop uploads, image gallery, object listing, and serving files from a Worker.',
+      path: '/r2',
+    }),
   loader: async () => {
     const [objects, images] = await Promise.all([listObjects(), listImages()])
     return { objects, images }

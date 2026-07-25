@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Bot,
   Code,
@@ -15,16 +16,13 @@ import {
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/llmo')({
-  head: () => ({
-    meta: [
-      { title: 'LLMO — claude-start-cf Template' },
-      {
-        name: 'description',
-        content:
-          'LLM Optimization patterns for TanStack Start: structured data, llms.txt, machine-readable endpoints, and content best practices for AI discoverability.',
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: 'LLMO — claude-start-cf Template',
+      description:
+        'LLM Optimization patterns for TanStack Start: structured data, llms.txt, machine-readable endpoints, and content best practices for AI discoverability.',
+      path: '/llmo',
+    }),
   component: LlmoPage,
 })
 

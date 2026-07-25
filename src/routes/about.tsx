@@ -1,7 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 
 export const Route = createFileRoute('/about')({
+  head: () =>
+    pageHead({
+      title: 'About — claude-start-cf Template',
+      description:
+        'A static route example: one file, one path, no dynamic segments.',
+      path: '/about',
+    }),
   component: AboutPage,
 })
 

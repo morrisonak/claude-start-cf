@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Globe,
   Send,
@@ -17,6 +18,13 @@ import {
 // direct fetch requests to the handler get the JSON response.
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/server-routes')({
+  head: () =>
+    pageHead({
+      title: 'API Routes — claude-start-cf Template',
+      description:
+        'HTTP API endpoints in TanStack Start: GET/POST handlers, dynamic params, splat routes, and when to use them over server functions.',
+      path: '/server-routes',
+    }),
   server: {
     handlers: {
       // This handler responds to direct GET requests (e.g. curl, fetch)

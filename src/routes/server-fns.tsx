@@ -7,6 +7,7 @@ import {
   setResponseHeaders,
 } from '@tanstack/react-start/server'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import { getGreeting } from '~/utils/greetings.functions'
 import {
   Server,
@@ -101,6 +102,13 @@ const submitContactForm = createServerFn({ method: 'POST' })
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/server-fns')({
+  head: () =>
+    pageHead({
+      title: 'Server Functions — claude-start-cf Template',
+      description:
+        'The server function RPC pattern in TanStack Start: input validation, FormData, error handling, and file organization.',
+      path: '/server-fns',
+    }),
   loader: async () => {
     const time = await getServerTime()
     const requestInfo = await getRequestInfo()

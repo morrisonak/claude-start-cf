@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Rocket,
   CheckCircle,
@@ -15,16 +16,13 @@ import {
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/deploy')({
-  head: () => ({
-    meta: [
-      { title: 'Deploy — claude-start-cf Template' },
-      {
-        name: 'description',
-        content:
-          'Setup, configuration, and deployment guide for TanStack Start on Cloudflare Workers with D1, R2, and wrangler.',
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: 'Deploy — claude-start-cf Template',
+      description:
+        'Setup, configuration, and deployment guide for TanStack Start on Cloudflare Workers with D1, R2, and wrangler.',
+      path: '/deploy',
+    }),
   component: DeployPage,
 })
 

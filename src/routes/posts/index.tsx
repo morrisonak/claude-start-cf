@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { pageHead } from '~/lib/site'
 
 const posts = [
   { id: '1', title: 'File-based routing', summary: 'How routes map from files to URLs in TanStack Router.' },
@@ -7,6 +8,13 @@ const posts = [
 ]
 
 export const Route = createFileRoute('/posts/')({
+  head: () =>
+    pageHead({
+      title: 'Posts — claude-start-cf Template',
+      description:
+        'Nested routing example: an index route rendering inside a layout route via Outlet.',
+      path: '/posts',
+    }),
   component: PostsIndex,
 })
 

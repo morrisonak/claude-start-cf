@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import { Markdown } from '~/components/Markdown'
 import { renderMarkdown } from '~/utils/markdown'
 import { fetchRemoteMarkdown } from '~/utils/docs.functions'
@@ -29,6 +30,13 @@ const renderPreview = createServerFn({ method: 'POST' })
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/markdown')({
+  head: () =>
+    pageHead({
+      title: 'Markdown — claude-start-cf Template',
+      description:
+        'Markdown rendering patterns: build-time content-collections, dynamic rendering via server functions, and TOC extraction.',
+      path: '/markdown',
+    }),
   component: MarkdownPage,
 })
 

@@ -7,6 +7,7 @@ import {
   createClientOnlyFn,
 } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Server,
   Monitor,
@@ -48,6 +49,13 @@ const getViewportSize = createClientOnlyFn(() => ({
 // Route definition — loader uses server function for safe data fetching
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/execution')({
+  head: () =>
+    pageHead({
+      title: 'Execution Model — claude-start-cf Template',
+      description:
+        'Where code runs in TanStack Start: SSR vs client rendering, server functions, isomorphic functions, and hydration.',
+      path: '/execution',
+    }),
   loader: async () => {
     // Correct pattern: loader is isomorphic, so delegate to a server function
     // for anything that needs server-only access.

@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { allPosts } from 'content-collections'
-
-const SITE_URL = 'https://claude-start-cf.jmorrison.workers.dev'
+import { SITE_URL } from '~/lib/site'
 
 const staticRoutes = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/about', changefreq: 'monthly', priority: '0.5' },
   { path: '/blog', changefreq: 'weekly', priority: '0.8' },
+  { path: '/posts', changefreq: 'monthly', priority: '0.5' },
+  { path: '/deploy', changefreq: 'monthly', priority: '0.5' },
   { path: '/execution', changefreq: 'monthly', priority: '0.5' },
   { path: '/env', changefreq: 'monthly', priority: '0.5' },
   { path: '/server-fns', changefreq: 'monthly', priority: '0.5' },

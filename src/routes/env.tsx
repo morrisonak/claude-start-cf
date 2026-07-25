@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import { Lock, Globe, FileText, ShieldCheck, Cloud, KeyRound, Terminal } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -27,6 +28,13 @@ const getServerEnv = createServerFn({ method: 'GET' }).handler(async () => {
 // Route — loader delegates to server function for server-side env access
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/env')({
+  head: () =>
+    pageHead({
+      title: 'Environment Variables — claude-start-cf Template',
+      description:
+        'How env vars work in TanStack Start on Cloudflare: VITE_ client vars, server-only vars, wrangler secrets, and .dev.vars.',
+      path: '/env',
+    }),
   loader: async () => {
     const serverEnv = await getServerEnv()
     return { serverEnv }

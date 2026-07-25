@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { pageHead } from '~/lib/site'
 import {
   Search,
   FileText,
@@ -34,16 +35,13 @@ const fetchHead = createServerFn({ method: 'GET' })
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/seo')({
-  head: () => ({
-    meta: [
-      { title: 'SEO — claude-start-cf Template' },
-      {
-        name: 'description',
-        content:
-          'Technical SEO patterns for TanStack Start: head management, Open Graph, JSON-LD, sitemaps, and robots.txt.',
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: 'SEO — claude-start-cf Template',
+      description:
+        'Technical SEO patterns for TanStack Start: head management, Open Graph, JSON-LD, sitemaps, and robots.txt.',
+      path: '/seo',
+    }),
   component: SeoPage,
 })
 

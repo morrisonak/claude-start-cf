@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
+import { pageHead } from '~/lib/site'
 
 const posts: Record<string, { title: string; body: string }> = {
   '1': {
@@ -17,6 +18,15 @@ const posts: Record<string, { title: string; body: string }> = {
 }
 
 export const Route = createFileRoute('/posts/$postId')({
+  head: ({ params }) => {
+    const post = posts[params.postId]
+    if (!post) return {}
+    return pageHead({
+      title: `${post.title} — claude-start-cf Template`,
+      description: post.body.slice(0, 150),
+      path: `/posts/${params.postId}`,
+    })
+  },
   component: PostPage,
 })
 

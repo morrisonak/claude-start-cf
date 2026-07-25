@@ -4,34 +4,27 @@ import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
-
-const SITE_URL = 'https://claude-start-cf.jmorrison.workers.dev'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '~/lib/site'
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'claude-start-cf — TanStack Start + Cloudflare Template' },
-      {
-        name: 'description',
-        content:
-          'A base template for Claude-coded projects using TanStack Start, Cloudflare Workers, D1, R2, and shadcn/ui.',
-      },
+      { title: `${SITE_NAME} — TanStack Start + Cloudflare Template` },
+      { name: 'description', content: SITE_DESCRIPTION },
       { property: 'og:type', content: 'website' },
-      { property: 'og:site_name', content: 'claude-start-cf' },
-      { property: 'og:title', content: 'claude-start-cf — TanStack Start + Cloudflare Template' },
-      {
-        property: 'og:description',
-        content:
-          'A base template for Claude-coded projects using TanStack Start, Cloudflare Workers, D1, R2, and shadcn/ui.',
-      },
-      { name: 'twitter:card', content: 'summary' },
+      { property: 'og:site_name', content: SITE_NAME },
+      { property: 'og:title', content: `${SITE_NAME} — TanStack Start + Cloudflare Template` },
+      { property: 'og:description', content: SITE_DESCRIPTION },
+      { property: 'og:image', content: `${SITE_URL}/og.png` },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [
       { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       { rel: 'stylesheet', href: appCss },
-      { rel: 'canonical', href: SITE_URL },
     ],
     scripts: [
       {
@@ -39,13 +32,12 @@ export const Route = createRootRoute({
         children: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          name: 'claude-start-cf',
+          name: SITE_NAME,
           url: SITE_URL,
-          description:
-            'A base template for Claude-coded projects using TanStack Start, Cloudflare Workers, D1, R2, and shadcn/ui.',
+          description: SITE_DESCRIPTION,
           publisher: {
             '@type': 'Organization',
-            name: 'claude-start-cf',
+            name: SITE_NAME,
             url: SITE_URL,
           },
         }),

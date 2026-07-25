@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { allPosts } from 'content-collections'
 
-const SITE_URL = 'https://claude-start-cf.jmorrison.workers.dev'
+import { SITE_URL } from '~/lib/site'
 
 export const Route = createFileRoute('/llms.txt')({
   server: {

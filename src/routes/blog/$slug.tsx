@@ -5,6 +5,8 @@ import { renderMarkdown } from '~/utils/markdown'
 import { Markdown } from '~/components/Markdown'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
 
+import { SITE_URL } from '~/lib/site'
+
 const renderPost = createServerFn({ method: 'GET' })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }) => {
@@ -14,8 +16,6 @@ const renderPost = createServerFn({ method: 'GET' })
     const { markup, headings } = await renderMarkdown(post.content)
     return { post, markup, headings }
   })
-
-const SITE_URL = 'https://claude-start-cf.jmorrison.workers.dev'
 
 export const Route = createFileRoute('/blog/$slug')({
   loader: ({ params }) => renderPost({ data: { slug: params.slug } }),

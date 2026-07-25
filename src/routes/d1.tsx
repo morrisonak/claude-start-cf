@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getDB } from '~/lib/env'
+import { pageHead } from '~/lib/site'
 import { SiteNav } from '~/components/SiteNav'
 import {
   Database,
@@ -117,6 +118,13 @@ const getTableInfo = createServerFn({ method: 'GET' }).handler(async () => {
 // Route
 // ---------------------------------------------------------------------------
 export const Route = createFileRoute('/d1')({
+  head: () =>
+    pageHead({
+      title: 'D1 Database — claude-start-cf Template',
+      description:
+        'Cloudflare D1 CRUD demo: parameterized queries, schema introspection, and server function data access from TanStack Start.',
+      path: '/d1',
+    }),
   loader: async () => {
     const [notes, tableInfo] = await Promise.all([listNotes(), getTableInfo()])
     return { notes, tableInfo }
