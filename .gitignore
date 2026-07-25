@@ -9,3 +9,5 @@ dist
 .wrangler
 worker-configuration.d.ts
 .content-collections/cache
+.content-collections/
+bun.lock
