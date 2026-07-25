@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { DemoCard } from '~/components/demo'
 import { pageHead } from '~/lib/site'
 import { Lock, Globe, FileText, ShieldCheck, Cloud, KeyRound, Terminal } from 'lucide-react'
 
@@ -490,41 +491,6 @@ function CloudflareAccessPatternDemo() {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Shared UI
-// ---------------------------------------------------------------------------
-
-function DemoCard({
-  icon,
-  title,
-  file,
-  description,
-  children,
-}: {
-  icon: React.ReactNode
-  title: string
-  file: string
-  description: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-lg border bg-card">
-      <div className="border-b px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
-            {icon}
-          </div>
-          <div>
-            <h2 className="font-semibold">{title}</h2>
-            <code className="text-xs text-muted-foreground">{file}</code>
-          </div>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="px-6 py-4">{children}</div>
-    </div>
-  )
-}
 
 function KV({ label, value }: { label: string; value: string }) {
   return (

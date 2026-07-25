@@ -1,22 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { SiteNav } from '~/components/SiteNav'
 import { pageHead } from '~/lib/site'
-import {
-  Zap,
-  Variable,
-  Server,
-  Route as RouteIcon,
-  Database,
-  HardDrive,
-  FileText,
-  Search,
-  Bot,
-  Info,
-  Newspaper,
-  BookOpen,
-  Rocket,
-  Github,
-} from 'lucide-react'
+import { categories } from '~/lib/nav'
+import { Github } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   head: () =>
@@ -28,42 +14,6 @@ export const Route = createFileRoute('/')({
     }),
   component: Home,
 })
-
-const categories = [
-  {
-    title: 'Framework Patterns',
-    items: [
-      { to: '/execution', icon: Zap, title: 'Execution', description: 'Client vs server rendering' },
-      { to: '/env', icon: Variable, title: 'Env Vars', description: 'Environment variable access' },
-      { to: '/server-fns', icon: Server, title: 'Server Fns', description: 'Server function RPCs' },
-      { to: '/server-routes', icon: RouteIcon, title: 'API Routes', description: 'HTTP API endpoints' },
-    ],
-  },
-  {
-    title: 'Cloudflare Services',
-    items: [
-      { to: '/d1', icon: Database, title: 'D1', description: 'SQLite database at the edge' },
-      { to: '/r2', icon: HardDrive, title: 'R2', description: 'Object storage uploads' },
-      { to: '/deploy', icon: Rocket, title: 'Deploy', description: 'Setup, config & deployment' },
-    ],
-  },
-  {
-    title: 'Content & SEO',
-    items: [
-      { to: '/markdown', icon: FileText, title: 'Markdown', description: 'MDX content rendering' },
-      { to: '/seo', icon: Search, title: 'SEO', description: 'Meta tags & structured data' },
-      { to: '/llmo', icon: Bot, title: 'LLMO', description: 'LLM-optimized content' },
-    ],
-  },
-  {
-    title: 'Routing & Content',
-    items: [
-      { to: '/about', icon: Info, title: 'About', description: 'Static page example' },
-      { to: '/posts', icon: Newspaper, title: 'Posts', description: 'Data fetching patterns' },
-      { to: '/blog', icon: BookOpen, title: 'Blog', description: 'File-based blog with MDX' },
-    ],
-  },
-] as const
 
 function Home() {
   return (

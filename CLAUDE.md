@@ -25,8 +25,10 @@ TanStack Start + Cloudflare Workers full-stack template. Demonstrates SSR, serve
 ## Project Structure
 
 - `src/routes/` — File-based routes (pages + API endpoints)
-- `src/components/` — Shared React components (SiteNav, Markdown, ui/)
+- `src/components/` — Shared React components (SiteNav, Markdown, demo.tsx, ui/)
 - `src/lib/env.ts` — `getDB()`, `getBucket()`, `getEnv()` helpers for Cloudflare bindings
+- `src/lib/site.ts` — `SITE_URL` and the `pageHead()` SEO helper
+- `src/lib/nav.ts` — Single source of truth for nav/homepage categories
 - `src/utils/markdown.ts` — Unified markdown rendering pipeline
 - `src/blog/` — Markdown blog posts with YAML frontmatter
 - `wrangler.jsonc` — Cloudflare Workers config (bindings, vars, compatibility)
@@ -38,13 +40,12 @@ TanStack Start + Cloudflare Workers full-stack template. Demonstrates SSR, serve
 
 **Environment variables:** `VITE_` prefix = client-visible. No prefix = server-only via `process.env`. Cloudflare secrets via `wrangler secret put`.
 
-**Demo pages:** Each route in `src/routes/` is a standalone demo page using local `DemoCard` and `CodeBlock` components. Follow the pattern in `llmo.tsx` or `seo.tsx` for new pages.
+**Demo pages:** Each route in `src/routes/` is a demo page built from the shared `DemoCard` and `CodeBlock` components in `src/components/demo.tsx`. Follow the pattern in `llmo.tsx` or `seo.tsx` for new pages.
 
 **Adding a new demo page:**
-1. Create `src/routes/my-page.tsx` with `createFileRoute`, `DemoCard`, `CodeBlock`
-2. Add to `src/routes/index.tsx` categories array (icon from lucide-react)
-3. Add to `src/components/SiteNav.tsx` categories array
-4. Mobile nav auto-includes via `allLinks = categories.flatMap()`
+1. Create `src/routes/my-page.tsx` with `createFileRoute`, `DemoCard`, `CodeBlock`, and a `head()` built with `pageHead()` from `~/lib/site`
+2. Add one entry to the categories array in `src/lib/nav.ts` (icon from lucide-react) — the homepage grid, desktop nav, and mobile nav all read from it
+3. Add the path to `staticRoutes` in `src/routes/sitemap[.]xml.ts`
 
 ## File Conventions
 

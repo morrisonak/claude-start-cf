@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Menu, X, Zap } from 'lucide-react'
 import { cn } from '~/lib/utils'
+import { categories } from '~/lib/nav'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,44 +13,8 @@ import {
   navigationMenuTriggerStyle,
 } from '~/components/ui/navigation-menu'
 
-const categories = [
-  {
-    label: 'Framework',
-    items: [
-      { to: '/execution', label: 'Execution', description: 'Client vs server rendering' },
-      { to: '/env', label: 'Env Vars', description: 'Environment variable access' },
-      { to: '/server-fns', label: 'Server Fns', description: 'Server function RPCs' },
-      { to: '/server-routes', label: 'API Routes', description: 'HTTP API endpoints' },
-    ],
-  },
-  {
-    label: 'Cloudflare',
-    items: [
-      { to: '/d1', label: 'D1', description: 'SQLite database at the edge' },
-      { to: '/r2', label: 'R2', description: 'Object storage uploads' },
-      { to: '/deploy', label: 'Deploy', description: 'Setup, config & deployment' },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { to: '/markdown', label: 'Markdown', description: 'MDX content rendering' },
-      { to: '/seo', label: 'SEO', description: 'Meta tags & structured data' },
-      { to: '/llmo', label: 'LLMO', description: 'LLM-optimized content' },
-    ],
-  },
-  {
-    label: 'Pages',
-    items: [
-      { to: '/about', label: 'About', description: 'Static page example' },
-      { to: '/posts', label: 'Posts', description: 'Data fetching patterns' },
-      { to: '/blog', label: 'Blog', description: 'File-based blog with MDX' },
-    ],
-  },
-]
-
 const allLinks = [
-  { to: '/' as const, label: 'Home' },
+  { to: '/', title: 'Home' },
   ...categories.flatMap((c) => c.items),
 ]
 
@@ -96,7 +61,7 @@ export function SiteNav() {
                                 : '',
                             )}
                           >
-                            <span className="font-medium">{item.label}</span>
+                            <span className="font-medium">{item.title}</span>
                             <span className="text-xs text-muted-foreground">
                               {item.description}
                             </span>
@@ -126,7 +91,7 @@ export function SiteNav() {
       {mobileOpen && (
         <nav className="border-t px-6 py-4 md:hidden">
           <div className="flex flex-col gap-3 text-sm">
-            {allLinks.map(({ to, label }) => (
+            {allLinks.map(({ to, title }) => (
               <Link
                 key={to}
                 to={to}
@@ -139,7 +104,7 @@ export function SiteNav() {
                     : 'text-muted-foreground',
                 )}
               >
-                {label}
+                {title}
               </Link>
             ))}
           </div>

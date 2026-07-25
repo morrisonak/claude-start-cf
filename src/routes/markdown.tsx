@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { SiteNav } from '~/components/SiteNav'
+import { DemoCard, CodeBlock } from '~/components/demo'
 import { pageHead } from '~/lib/site'
 import { Markdown } from '~/components/Markdown'
 import { renderMarkdown } from '~/utils/markdown'
@@ -396,51 +397,5 @@ export async function renderMarkdown(content: string) {
         </div>
       </div>
     </DemoCard>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Shared UI
-// ---------------------------------------------------------------------------
-
-function CodeBlock({ code }: { code: string }) {
-  return (
-    <div className="mt-2 rounded border bg-muted/50 p-3">
-      <pre className="font-mono text-xs text-muted-foreground leading-relaxed whitespace-pre overflow-x-auto">
-        {code}
-      </pre>
-    </div>
-  )
-}
-
-function DemoCard({
-  icon,
-  title,
-  file,
-  description,
-  children,
-}: {
-  icon: React.ReactNode
-  title: string
-  file: string
-  description: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-lg border bg-card">
-      <div className="border-b px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
-            {icon}
-          </div>
-          <div>
-            <h2 className="font-semibold">{title}</h2>
-            <code className="text-xs text-muted-foreground">{file}</code>
-          </div>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="px-6 py-4">{children}</div>
-    </div>
   )
 }
