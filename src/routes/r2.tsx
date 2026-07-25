@@ -747,7 +747,7 @@ function ReadObjectDemo() {
           onChange={(e) => setKey(e.target.value)}
           placeholder="Object key (e.g. demo/hello.txt)"
           required
-          className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+          className="min-w-0 flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
         />
         <button
           type="submit"

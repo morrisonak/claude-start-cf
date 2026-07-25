@@ -357,7 +357,7 @@ function HeadInspectorDemo() {
           value={path}
           onChange={(e) => setPath(e.target.value)}
           placeholder="/blog/hello-world"
-          className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+          className="min-w-0 flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
         />
         <button
           type="submit"

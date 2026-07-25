@@ -258,7 +258,7 @@ function TypeSafetyDemo() {
     >
       <div className="space-y-3 text-sm">
         <div className="rounded border bg-muted/50 p-3">
-          <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+          <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`// src/env.d.ts
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string
@@ -300,7 +300,7 @@ function CloudflareVarsDemo({ serverEnv }: { serverEnv: ServerEnvData }) {
         <KV label="DEMO_WRANGLER_VAR" value={serverEnv.demoWranglerVar} />
       </div>
       <div className="mt-4 rounded border bg-muted/50 p-3">
-        <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+        <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`// wrangler.jsonc
 {
   "vars": {
@@ -333,7 +333,7 @@ function CloudflareSecretsDemo() {
           <p className="font-medium text-foreground mb-2">Setting secrets</p>
           <div className="space-y-2">
             <div className="rounded border bg-muted/50 p-3">
-              <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+              <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`# Set a secret interactively (prompts for value)
 wrangler secret put DATABASE_URL
 
@@ -351,7 +351,7 @@ wrangler secret put DATABASE_URL --env staging`}
         <div>
           <p className="font-medium text-foreground mb-2">Managing secrets</p>
           <div className="rounded border bg-muted/50 p-3">
-            <pre className="font-mono text-xs text-muted-foreground leading-relaxed">
+            <pre className="overflow-x-auto font-mono text-xs text-muted-foreground leading-relaxed">
 {`# List all secrets (names only, values are hidden)
 wrangler secret list
 
@@ -365,7 +365,7 @@ wrangler secret delete DATABASE_URL`}
         <div>
           <p className="font-medium text-foreground mb-2">Accessing in code</p>
           <div className="rounded border border-primary/30 bg-primary/5 p-3">
-            <pre className="font-mono text-xs text-primary leading-relaxed">
+            <pre className="overflow-x-auto font-mono text-xs text-primary leading-relaxed">
 {`// Secrets are accessed the same way as vars
 const getDb = createServerFn().handler(async () => {
   const url = process.env.DATABASE_URL
@@ -495,8 +495,8 @@ function CloudflareAccessPatternDemo() {
 function KV({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
-      <span className="text-muted-foreground font-mono text-xs">{label}</span>
-      <code className="rounded bg-muted px-2 py-0.5 text-xs font-mono">
+      <span className="break-all text-muted-foreground font-mono text-xs">{label}</span>
+      <code className="min-w-0 rounded bg-muted px-2 py-0.5 text-xs font-mono break-all">
         {value}
       </code>
     </div>

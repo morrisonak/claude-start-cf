@@ -491,7 +491,7 @@ function UseServerFnDemo() {
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter your name"
           onKeyDown={(e) => e.key === 'Enter' && handleGreet()}
-          className="flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+          className="min-w-0 flex-1 rounded-md border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
         />
         <button
           onClick={handleGreet}
